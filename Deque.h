@@ -105,7 +105,8 @@ class MyDeque {
         friend bool operator == (const MyDeque& lhs, const MyDeque& rhs) {
             // <your code>
             // you must use std::equal()
-            return true;}
+            return true;
+        }
 
         // ----------
         // operator <
@@ -125,8 +126,11 @@ class MyDeque {
         // ----
 
         allocator_type _a;
-
-        // <your data>
+        T** container;
+        T* first_block;
+        T* last_block;
+        int size;
+        static int block_size;
 
     private:
         // -----
@@ -197,16 +201,19 @@ class MyDeque {
                 // data
                 // ----
 
-                // <your data>
+                value_type *current_block;
+                std::size_t current_block_index;
 
             private:
                 // -----
                 // valid
                 // -----
 
-                bool valid () const {
-                    // <your code>
-                    return true;}
+                bool valid () const 
+                {
+
+                    return true;
+                }
 
             public:
                 // -----------
@@ -214,11 +221,16 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * constructor for iterator
+                 * @param block the pointer a block in the deque
+                 * @param index the index of the block
                  */
-                iterator (/* <your arguments> */) {
-                    // <your code>
-                    assert(valid());}
+                iterator (value_type* block, std::size_t index) 
+                {
+                    current_block = block;
+                    current_block_index = index;
+                    assert(valid());
+                }
 
                 // Default copy, destructor, and copy assignment.
                 // iterator (const iterator&);
@@ -230,89 +242,150 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * deference operator
+                 * @return a reference to the current element the iterator at
                  */
-                reference operator * () const {
-                    // <your code>
-                    // dummy is just to be able to compile the skeleton, remove it
-                    static value_type dummy;
-                    return dummy;}
+                reference operator * () const 
+                {
+                    return *current_block[current_block_index];
+                }
 
                 // -----------
                 // operator ->
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * structure dereference operator
+                 * @return the desired member of the current element the iterator at 
                  */
-                pointer operator -> () const {
-                    return &**this;}
+                pointer operator -> () const 
+                {
+                    return &**this;
+                }
 
                 // -----------
                 // operator ++
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * increment operator (pre)
+                 * @return reference of the iterator after incrementation
                  */
-                iterator& operator ++ () {
-                    // <your code>
+                iterator& operator ++ () 
+                {
+                    //wrap around if at the end of current block
+                    if(++current_block_index == block_size)
+                    {
+                        current_block_index = 0;
+                        ++current_block;
+                    }
+
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 /**
-                 * <your documentation>
+                 * increment operator (post)
+                 * @return reference of the iterator before incrementation
                  */
-                iterator operator ++ (int) {
+                iterator operator ++ (int) 
+                {
                     iterator x = *this;
                     ++(*this);
                     assert(valid());
-                    return x;}
+                    return x;
+                }
 
                 // -----------
                 // operator --
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * decrement operator (pre)
+                 * @return reference of the iterator after decrementation
                  */
-                iterator& operator -- () {
-                    // <your code>
+                iterator& operator -- () 
+                {
+                    //wrap around if at the end of current block
+                    if(current_block_index-- == 0)
+                    {
+                        current_block_index = 9;
+                        --current_block;
+                    }
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 /**
-                 * <your documentation>
+                 * decrement operator (post)
+                 * @return reference of the iterator before decrementation
                  */
-                iterator operator -- (int) {
+                iterator operator -- (int) 
+                {
                     iterator x = *this;
                     --(*this);
                     assert(valid());
-                    return x;}
+                    return x;
+                }
 
                 // -----------
                 // operator +=
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * += operator
+                 * @param d the number of incrememtation
+                 * @return reference of the iterator after incrementation
                  */
-                iterator& operator += (difference_type d) {
-                    // <your code>
+                iterator& operator += (difference_type d) 
+                {
+                    //wrap around blocks
+                    current_block += d / block_size;
+
+                    int index_inc = d % block_size;
+                    //warp around an additional block if necessary
+                    if((current_block_index + index_inc) >= block_size)
+                    {
+                        current_block_index = (current_block_index + index_inc) % block_size;
+                        ++current_block;
+                    }
+                    else
+                    {
+                        current_block_index += index_inc;
+                    }
+
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 // -----------
                 // operator -=
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * -= operator
+                 * @param d the number of decrememtation
+                 * @return reference of the iterator after decrementation
                  */
-                iterator& operator -= (difference_type d) {
-                    // <your code>
+                iterator& operator -= (difference_type d) 
+                {
+                    //wrap around blocks
+                    current_block -= d / block_size;
+
+                    int index_dec = d % block_size;
+                    //warp around an additional block if necessary
+                    if((current_block_index - index_dec) > current_block_index)
+                    {
+                        current_block_index = block_size - (index_dec - current_block_index);
+                        --current_block;
+                    }
+                    else
+                    {
+                        current_block_index -= index_dec;
+                    }
                     assert(valid());
-                    return *this;}};
+                    return *this;}
+                };
 
     public:
         // --------------
@@ -337,14 +410,24 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * == Operator
+                 * @param lhs constant iterator
+                 * @param rhs constant iterator
+                 * @return bool if they are equal
                  */
-                friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) {
-                    // <your code>
-                    return true;}
+                friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) 
+                {
+
+                    return (lhs.current_block_index == rhs.current_block_index) && (*lhs.current_block == *rhs.current_block) && (*rhs == *lhs);
+
+
+                }
 
                 /**
-                 * <your documentation>
+                 * != Operator
+                 * @param lhs constant iterator
+                 * @param rhs constant iterator
+                 * @return bool if they are not equal
                  */
                 friend bool operator != (const const_iterator& lhs, const const_iterator& rhs) {
                     return !(lhs == rhs);}
@@ -354,7 +437,10 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * + Operator
+                 * @param lhs constant iterator
+                 * @param rhs constant iterator
+                 * @return const_iterator with new position after addition
                  */
                 friend const_iterator operator + (const_iterator lhs, difference_type rhs) {
                     return lhs += rhs;}
@@ -364,7 +450,10 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * - Operator
+                 * @param lhs constant iterator
+                 * @param rhs constant iterator
+                 * @return const_iterator with new position after subtraction
                  */
                 friend const_iterator operator - (const_iterator lhs, difference_type rhs) {
                     return lhs -= rhs;}
@@ -374,7 +463,9 @@ class MyDeque {
                 // data
                 // ----
 
-                // <your data>
+                value_type *current_block;
+                std::size_t current_block_index;
+
 
             private:
                 // -----
@@ -391,10 +482,13 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * constructor for iterator
+                 * @param block the pointer a block in the deque
+                 * @param index the index of the block
                  */
-                const_iterator (/* <your arguments> */) {
-                    // <your code>
+                const_iterator (value_type* x, std::size_t index) {
+                    current_block = x;
+                    index = current_block_index;
                     assert(valid());}
 
                 // Default copy, destructor, and copy assignment.
@@ -407,20 +501,20 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * deference operator
+                 * @return a reference to the current element the iterator at
                  */
                 reference operator * () const {
-                    // <your code>
-                    // dummy is just to be able to compile the skeleton, remove it
-                    static value_type dummy;
-                    return dummy;}
+                    
+                    return *current_block[current_block_index];}
 
                 // -----------
                 // operator ->
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * structure dereference operator
+                 * @return the desired member of the current element the iterator at 
                  */
                 pointer operator -> () const {
                     return &**this;}
@@ -430,15 +524,24 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * increment operator (pre)
+                 * @return const_reference of the iterator after incrementation
                  */
                 const_iterator& operator ++ () {
-                    // <your code>
+                    //wrap around if at the end of current block
+                    if(++current_block_index == block_size)
+                    {
+                        current_block_index = 0;
+                        ++current_block;
+                    }
+
                     assert(valid());
-                    return *this;}
+                    return const_cast<iterator&>(*this);
+                }
 
                 /**
-                 * <your documentation>
+                 * increment operator (post)
+                 * @return const_reference of the iterator after incrementation
                  */
                 const_iterator operator ++ (int) {
                     const_iterator x = *this;
@@ -451,15 +554,23 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * decrement operator (pre)
+                 * @return constant reference of the iterator after decrementation
                  */
                 const_iterator& operator -- () {
-                    // <your code>
+                    //wrap around if at the end of current block
+                    if(current_block_index-- == 0)
+                    {
+                        current_block_index = 9;
+                        --current_block;
+                    }
                     assert(valid());
-                    return *this;}
+                    return const_cast<iterator&>(*this);
+                }
 
                 /**
-                 * <your documentation>
+                 * decrement operator (post)
+                 * @return constant reference of the iterator before decrementation
                  */
                 const_iterator operator -- (int) {
                     const_iterator x = *this;
@@ -472,24 +583,56 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * += operator
+                 * @param d the number of incrememtation
+                 * @return constant reference of the iterator after incrementation
                  */
                 const_iterator& operator += (difference_type) {
-                    // <your code>
+                    //wrap around blocks
+                    current_block += d / block_size;
+
+                    int index_inc = d % block_size;
+                    //warp around an additional block if necessary
+                    if((current_block_index + index_inc) >= block_size)
+                    {
+                        current_block_index = (current_block_index + index_inc) % block_size;
+                        ++current_block;
+                    }
+                    else
+                    {
+                        current_block_index += index_inc;
+                    }
+
                     assert(valid());
-                    return *this;}
+                    return const_cast<iterator&>(*this);
+                }
 
                 // -----------
                 // operator -=
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * -= operator
+                 * @param d the number of decrememtation
+                 * @return constant reference of the iterator after decrementation
                  */
                 const_iterator& operator -= (difference_type) {
-                    // <your code>
+                    //wrap around blocks
+                    current_block -= d / block_size;
+
+                    int index_dec = d % block_size;
+                    //warp around an additional block if necessary
+                    if((current_block_index - index_dec) > current_block_index)
+                    {
+                        current_block_index = block_size - (index_dec - current_block_index);
+                        --current_block;
+                    }
+                    else
+                    {
+                        current_block_index -= index_dec;
+                    }
                     assert(valid());
-                    return *this;}};
+                    return const_cast<iterator&>(*this);}};
 
     public:
         // ------------
@@ -497,18 +640,25 @@ class MyDeque {
         // ------------
 
         /**
-         * <your documentation>
+         * @param a the allocator the deque used
+         * default constructor or constructor that takes in an allocator
          */
-        explicit MyDeque (const allocator_type& a = allocator_type()) {
-            // <your code>
-            assert(valid());}
+        explicit MyDeque (const allocator_type& a = allocator_type()) 
+        {
+            size = 0;
+            container = a.allocate(1);
+
+            assert(valid());
+        }
 
         /**
-         * <your documentation>
+         * @param s the number of elements
          */
-        explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) {
+        explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) 
+        {
             // <your code>
-            assert(valid());}
+            assert(valid());
+        }
 
         /**
          * <your documentation>
@@ -764,6 +914,9 @@ class MyDeque {
          */
         void swap (MyDeque&) {
             // <your code>
-            assert(valid());}};
+            assert(valid());}
+        };
+
+        int Deque:: block_size = 10;
 
 #endif // Deque_h
