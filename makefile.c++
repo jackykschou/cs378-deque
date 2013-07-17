@@ -25,7 +25,7 @@ Deque.zip: Deque.h Deque.log TestDeque.c++ TestDeque.out
 	zip -r Deque.zip html/ Deque.h Deque.log TestDeque.c++ TestDeque.out
 
 TestDeque: Deque.h TestDeque.c++
-	g++ -pedantic -std=c++0x -Wall TestDeque.c++ -o TestDeque -lcppunit -ldl
+	g++ -pedantic -std=c++0x -Wall TestDeque.c++ -o TestDeque -lgtest -lgtest_main -pthread
 
 TestDeque.out: TestDeque
 	valgrind TestDeque > TestDeque.out
