@@ -126,11 +126,14 @@ class MyDeque {
         // ----
 
         allocator_type _a;
-        T** container;
-        T* first_block;
-        T* last_block;
-        int size;
-        static int block_size;
+        allocator_type<T>::rebind<*T>::other _a_outer;
+        pointer* container;
+        pointer* first_block;
+        pointer* last_block;
+        iterator begin;
+        iterator end;
+        std::size_t size;
+        static std::size_t block_size;
 
     private:
         // -----
@@ -201,7 +204,7 @@ class MyDeque {
                 // data
                 // ----
 
-                value_type *current_block;
+                pointer *current_block;
                 std::size_t current_block_index;
 
             private:
@@ -225,9 +228,9 @@ class MyDeque {
                  * @param block the pointer a block in the deque
                  * @param index the index of the block
                  */
-                iterator (value_type* block, std::size_t index) 
+                iterator (pointer* block, std::size_t index) 
                 {
-                    current_block = block;
+                    *current_block = block;
                     current_block_index = index;
                     assert(valid());
                 }
@@ -310,7 +313,7 @@ class MyDeque {
                     if(current_block_index-- == 0)
                     {
                         current_block_index = 9;
-                        --current_block;
+                        --*current_block;
                     }
                     assert(valid());
                     return *this;
@@ -370,14 +373,14 @@ class MyDeque {
                 iterator& operator -= (difference_type d) 
                 {
                     //wrap around blocks
-                    current_block -= d / block_size;
+                    *current_block -= d / block_size;
 
                     int index_dec = d % block_size;
                     //warp around an additional block if necessary
                     if((current_block_index - index_dec) > current_block_index)
                     {
                         current_block_index = block_size - (index_dec - current_block_index);
-                        --current_block;
+                        --*current_block;
                     }
                     else
                     {
@@ -418,7 +421,7 @@ class MyDeque {
                 friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) 
                 {
 
-                    return (lhs.current_block_index == rhs.current_block_index) && (*lhs.current_block == *rhs.current_block) && (*rhs == *lhs);
+                    return (lhs.current_block_index == rhs.current_block_index) && (*lhs.current_block == *rhs.current_block);
 
 
                 }
@@ -463,7 +466,7 @@ class MyDeque {
                 // data
                 // ----
 
-                value_type *current_block;
+                pointer *current_block;
                 std::size_t current_block_index;
 
 
@@ -486,7 +489,7 @@ class MyDeque {
                  * @param block the pointer a block in the deque
                  * @param index the index of the block
                  */
-                const_iterator (value_type* x, std::size_t index) {
+                const_iterator (pointer* x, std::size_t index) {
                     current_block = x;
                     index = current_block_index;
                     assert(valid());}
@@ -532,7 +535,7 @@ class MyDeque {
                     if(++current_block_index == block_size)
                     {
                         current_block_index = 0;
-                        ++current_block;
+                        ++*current_block;
                     }
 
                     assert(valid());
@@ -562,7 +565,7 @@ class MyDeque {
                     if(current_block_index-- == 0)
                     {
                         current_block_index = 9;
-                        --current_block;
+                        --*current_block;
                     }
                     assert(valid());
                     return const_cast<iterator&>(*this);
@@ -589,14 +592,14 @@ class MyDeque {
                  */
                 const_iterator& operator += (difference_type) {
                     //wrap around blocks
-                    current_block += d / block_size;
+                    *current_block += d / block_size;
 
                     int index_inc = d % block_size;
                     //warp around an additional block if necessary
                     if((current_block_index + index_inc) >= block_size)
                     {
                         current_block_index = (current_block_index + index_inc) % block_size;
-                        ++current_block;
+                        ++*current_block;
                     }
                     else
                     {
@@ -618,14 +621,14 @@ class MyDeque {
                  */
                 const_iterator& operator -= (difference_type) {
                     //wrap around blocks
-                    current_block -= d / block_size;
+                    *current_block -= d / block_size;
 
                     int index_dec = d % block_size;
                     //warp around an additional block if necessary
                     if((current_block_index - index_dec) > current_block_index)
                     {
                         current_block_index = block_size - (index_dec - current_block_index);
-                        --current_block;
+                        --*current_block;
                     }
                     else
                     {
@@ -633,6 +636,10 @@ class MyDeque {
                     }
                     assert(valid());
                     return const_cast<iterator&>(*this);}};
+
+                // -----------
+                // operator -=
+                // -----------
 
     public:
         // ------------
@@ -646,7 +653,21 @@ class MyDeque {
         explicit MyDeque (const allocator_type& a = allocator_type()) 
         {
             size = 0;
-            container = a.allocate(1);
+
+            //allocate outer array
+            container = _a_outer.allocate(5);
+
+            //allocate inner array
+            for(int i = 0; i < 5; ++i)
+            {
+                *(container + i) = _a.allocate(block_size);
+            }
+
+            first_block = container;
+            last_block = container + 4;
+            begin = iterator(container + 2, 5);
+            end = iterator(container + 2, 5);
+
 
             assert(valid());
         }
@@ -656,7 +677,64 @@ class MyDeque {
          */
         explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) 
         {
-            // <your code>
+            size = s;
+            std::size_t block_num = s / 10 + 1;
+
+            //allocate outer array
+            container = _a_outer.allocator(block_num);
+
+            //allocate inner array
+            for(int i = 0; i < block_num; ++i)
+            {
+                *(container + i) = _a.allocate(block_size);
+            }
+
+            first_block = container;
+            last_block = container + block_num - 1;
+
+            std::size_t construct_begin_index = block_size / 2 - 1;
+            pointer* construct_begin_block = container + block_num / 2;
+            std::size_t construct_end_index = block_size / 2;
+            pointer* construct_end_block = container + block_num / 2;
+
+            begin = iterator(container + block_num / 2, 5);
+            end = iterator(container + block_num / 2, 5);
+
+            for(int i = 0; i < s / 2; ++i)
+            {   
+                //wrap around if at the end of current block
+                if(construct_begin_index + i - 1 > construct_begin_index)
+                {
+                    construct_begin_index = 9;
+                    --*construct_begin_block;
+                }
+                if(construct_end_index - i + 1 == 10)
+                {
+                    construct_end_index = 0;
+                    ++*construct_end_block;
+                }
+
+                _a.construct(*(construct_begin_block) + construct_begin_index, v);
+                _a.construct(*(construct_end_block) + construct_end_index, v);
+                --begin;
+                ++end;
+                --construct_begin_index;
+                ++construct_end_index;
+            }
+
+
+            //if size is odd, add a single element at the beginning
+            if(s % 2 == 1)
+            {
+                if(construct_begin_index + i - 1 > construct_begin_index)
+                {
+                    construct_begin_index = 9;
+                    --*construct_begin_block;
+                }
+                _a.construct(*(construct_begin_block) + construct_begin_index, v);
+                --begin;
+            }
+
             assert(valid());
         }
 
@@ -917,6 +995,6 @@ class MyDeque {
             assert(valid());}
         };
 
-        int Deque:: block_size = 10;
+        std::size_t Deque:: block_size = 10;
 
 #endif // Deque_h
