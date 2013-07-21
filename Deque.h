@@ -403,8 +403,49 @@ class MyDeque {
                     return (*current_block) + current_block_index;
                 }
 
+                // -----------
+                // get_block_address
+                // -----------
+
+                /**
+                 * return the address of the current block the iterator is at
+                 */
+                pointer* get_block_address () 
+                {
+                    return current_block;
+                }
+
+                // -----------
+                // get_block_index
+                // -----------
+
+                /**
+                 * return the address of the current block the iterator is at
+                 */
+
+                std::size_t get_block_index () 
+                {
+                    return current_block_index;
+                }
+
+
+                // -----------
+                // set_block_address
+                // -----------
+
+                /**
+                 * @param new_current_block the new block address
+                 * return the address of the current block the iterator is at
+                 */
+                void set_block_address (pointer* new_current_block) 
+                {
+                    current_block = new_current_block;
+                }
 
                 };
+
+                
+
 
     public:
         // --------------
@@ -666,6 +707,45 @@ class MyDeque {
                     return (*current_block) + current_block_index;
                 }
 
+                // -----------
+                // get_block_address
+                // -----------
+
+                /**
+                 * return the address of the current block the iterator is at
+                 */
+                pointer* get_block_address () 
+                {
+                    return current_block;
+                }
+
+                // -----------
+                // get_block_index
+                // -----------
+
+                /**
+                 * return the address of the current block the iterator is at
+                 */
+
+                std::size_t get_block_index () 
+                {
+                    return current_block_index;
+                }
+
+                // -----------
+                // set_block_address
+                // -----------
+
+                /**
+                 * @param new_current_block the new block address
+                 * return the address of the current block the iterator is at
+                 */
+                void set_block_address (pointer* new_current_block) 
+                {
+                    current_block = new_current_block;
+                }
+            };
+
     public:
         // ------------
         // constructors
@@ -893,7 +973,7 @@ class MyDeque {
                 end = new_end;
                 copy(rhs.begin, rhs.end, begin);
             }
-            else
+            else //reallocate spaces and destroy old elements
             {
                 for(iterator current = begin; current != end; ++current)
                 {
@@ -904,6 +984,15 @@ class MyDeque {
                     _a.deallocate(*current, block_size);
                 }
                 _a_outer.deallocate(first_block, last_block - first_block);
+
+                std::size_t block_num = (rhs.size / block_size + 1) * 2;
+                pointer* new_first_block = _a_outer.allocate(block_num);
+                begin = iterator(new_first_block + ((rhs.size / block_size + 1) / 2), rhs.begin.get_block_index);
+
+                end = std::copy(rhs.begin, rhs.end, begin);
+
+                first_block = new_first_block;
+                last_block = new_first_block + block_num;
             }
 
             size = rhs.size;
@@ -915,16 +1004,18 @@ class MyDeque {
         // -----------
 
         /**
-         * <your documentation>
+         * [] operator
+         * @param index a copy of the value indexing
+         * @return reference of the element accesed by the index
          */
         reference operator [] (size_type index) {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+
+            return *(begin + index);}
 
         /**
-         * <your documentation>
+         * [] constant_reference operator
+         * @param index a copy of the value indexing
+         * @return constant reference of the element accesed by the index
          */
         const_reference operator [] (size_type index) const {
             return const_cast<MyDeque*>(this)->operator[](index);}
@@ -934,16 +1025,22 @@ class MyDeque {
         // --
 
         /**
-         * <your documentation>
+         * at funciton
+         * @param index a copy of the value indexing
+         * @return reference of the element accesed at index
+         * @throw out_of_range
          */
         reference at (size_type index) {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            if (index >= size || index < 0)
+                throw std::out_of_range;
+
+            return *(begin + index);}
 
         /**
-         * <your documentation>
+         * at constant funciton
+         * @param index a copy of the value indexing
+         * @return constant reference of the element accesed at index
+         * @throw out_of_range
          */
         const_reference at (size_type index) const {
             return const_cast<MyDeque*>(this)->at(index);}
@@ -953,16 +1050,16 @@ class MyDeque {
         // ----
 
         /**
-         * <your documentation>
+         * back function
+         * @return reference to back element in dequeu
          */
         reference back () {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            
+            return *(end-1);}
 
         /**
-         * <your documentation>
+         * back funciton
+         * @return constant reference to back element in dequeu
          */
         const_reference back () const {
             return const_cast<MyDeque*>(this)->back();}
@@ -972,28 +1069,30 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * begin function
+         * @return iterator to the beginning of dequeu
          */
         iterator begin () {
-            // <your code>
-            return iterator(/* <your arguments> */);}
+            
+            return begin;}
 
         /**
-         * <your documentation>
+         * begin funciton
+         * @return constant iterator to the beginning of dequeu
          */
         const_iterator begin () const {
-            // <your code>
-            return const_iterator(/* <your arguments> */);}
+           
+            return const_iterator(begin.get_block_address(), begin.get_block_index());}
 
         // -----
         // clear
         // -----
 
         /**
-         * <your documentation>
+         * clear function
          */
         void clear () {
-            // <your code>
+            this->resize(0);
             assert(valid());}
 
         // -----
@@ -1001,7 +1100,8 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * empty funciton 
+         * @return bool true if empty, false if not
          */
         bool empty () const {
             return !size();}
@@ -1011,18 +1111,20 @@ class MyDeque {
         // ---
 
         /**
-         * <your documentation>
+         * end function
+         * @return iterator to the end of deque
          */
         iterator end () {
-            // <your code>
-            return iterator(/* <your arguments> */);}
+            
+            return end;}
 
         /**
-         * <your documentation>
+         * end function
+         * @return iterator to the end of deque
          */
         const_iterator end () const {
-            // <your code>
-            return const_iterator(/* <your arguments> */);}
+            
+            return const_iterator(end.get_block_address(), end.get_block_index());}
 
         // -----
         // erase
@@ -1041,16 +1143,16 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * front function
+         * @return reference to the front element of the dequeu
          */
         reference front () {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            
+            return *begin;}
 
         /**
-         * <your documentation>
+         * front function
+         * @return  constant reference to the front element of the dequeu
          */
         const_reference front () const {
             return const_cast<MyDeque*>(this)->front();}
@@ -1110,10 +1212,47 @@ class MyDeque {
         /**
          * @param s the size to be resized
          * @param v the element to get copied for the new space expanded
+         * change the 
          */
         void resize (size_type s, const_reference v = value_type()) 
         {
-            
+            //dellocate if s is less than the current size
+            if(s <= size)
+            {
+                std::size_t count = size - s;
+                while(count-- != 0)
+                {
+                    _a.destroy(&end);
+                    --end;
+                }
+            }
+            //allocate more space (reallocation)
+            else
+            {
+                std::size_t block_num = (s / block_size + 1) * 2;
+                pointer* new_first_block = _a_outer.allocate(block_num);
+                begin.set_block_address(new_first_block + ((s / block_size + 1) / 2));
+
+                for(pointer* current = new_first_block + ((s / block_size + 1) / 2), pointer* old_begin_block = begin.get_block_address(),  *old_end_block = end.get_block_address(); 
+                    old_first_block != old_end_block; ++current, ++old_first_block)
+                {
+                    *current = *old_first_block; 
+                }
+                end = begin + s;
+
+
+                //append new elements
+                std::size_t count = s - size;
+                while(count-- != 0)
+                {
+                    this->push(v);
+                }
+
+                _a_outer.deallocate(first_block, last_block - first_block);
+                first_block = new_first_block;
+                last_block = new_first_block + block_num;
+            }
+            size = s;
             assert(valid());
         }
 
@@ -1122,21 +1261,43 @@ class MyDeque {
         // ----
 
         /**
-         * <your documentation>
+         * size function
+         * @return size_type the size of the dequeu
          */
         size_type size () const {
-            // <your code>
-            return 0;}
+            
+            return size;}
 
         // ----
         // swap
         // ----
 
         /**
-         * <your documentation>
+         * swap
+         * @param rhs reference to MyDeque to be swapped
          */
-        void swap (MyDeque&) {
-            // <your code>
+        void swap (MyDeque& rhs) {
+
+            pointer* temp_first = rhs.first_block;
+            pointer* temp_last = rhs.last_block;
+            iterator temp_begin = rhs.begin;
+            iterator temp_end = rhs.end;
+
+            rhs.first_block = first_block;
+            rhs.last_block = last_block;
+            rhs.begin = begin;
+            rhs.end = end;
+
+            first_block = temp_first;
+            last_block = temp_last;
+            begin = temp_begin;
+            end = temp_end; 
+
+            rhs.size ^= size;
+            size ^= rhs.size;
+            rhs.size ^= size;
+
+
             assert(valid());}
         };
 
