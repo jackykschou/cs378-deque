@@ -142,9 +142,11 @@ class MyDeque {
         // valid
         // -----
 
-        bool valid () const {
-            // <your code>
-            return true;}
+        bool valid () const 
+        {
+
+            return begin <= end && size >= 0 && first_block <= last_block;
+        }
 
     public:
         // --------
@@ -230,7 +232,7 @@ class MyDeque {
                 bool valid () const 
                 {
 
-                    return true;
+                    return current_block <= last_block && current_block >= first_block;
                 }
 
 
@@ -328,7 +330,7 @@ class MyDeque {
                     //wrap around if at the end of current block
                     if(current_block_index-- == 0)
                     {
-                        current_block_index = 9;
+                        current_block_index = (block_size - 1);
                         --*current_block;
                     }
                     assert(valid());
@@ -535,9 +537,10 @@ class MyDeque {
                 // valid
                 // -----
 
-                bool valid () const {
-                    // <your code>
-                    return true;}
+                bool valid () const 
+                {
+                    return current_block <= last_block && current_block >= first_block;
+                }
 
             public:
                 // -----------
@@ -624,7 +627,7 @@ class MyDeque {
                     //wrap around if at the end of current block
                     if(current_block_index-- == 0)
                     {
-                        current_block_index = 9;
+                        current_block_index = (block_size - 1);
                         --current_block;
                     }
                     assert(valid());
@@ -1026,7 +1029,7 @@ class MyDeque {
          * clear function
          */
         void clear () {
-            this->resize(0);
+            resize(0);
             assert(valid());}
 
         // -----
@@ -1038,7 +1041,7 @@ class MyDeque {
          * @return bool true if empty, false if not
          */
         bool empty () const {
-            return !size();}
+            return !size;}
 
         // ---
         // end
@@ -1071,19 +1074,32 @@ class MyDeque {
          */
         iterator erase (iterator it) 
         {
+            iterator result = it + 1;
             //check if it is closer to the begin or closer to the end (and shift elements to the shorter side)
             if((it - begin) <= (end - it))
             {
-
+                while(it != begin)
+                {
+                    *it = *(it - 1);
+                    --it;
+                }
+                _a.destroy(&*it);
+                ++begin;
             }
             else
             {
-                
+                while(it != (end - 1))
+                {
+                    *it = *(it + 1);
+                    ++it;
+                }
+                _a.destroy(&*it);
+                --end;
             }
 
-
             assert(valid());
-            return iterator();}
+            return result;
+        }
 
         // -----
         // front
@@ -1114,12 +1130,91 @@ class MyDeque {
          * @param b an element to get insert
          * @return an iterator to the new element get inserted
          */
-        iterator insert (iterator it, const_reference v) {
+        iterator insert (iterator it, const_reference v) 
+        {
 
+            iterator result;
+            //if the dequeu is already full, reisze it
+            if((size + 1) > ((last_block - first_block) * block_size))
+            {
+                std::size_t it_offset = it - begin; //keep track of the insertion position
+                resize(size + 1);
+                it = begin + it_offset;
+                iterator temp = end - 2;
 
+                while(temp != (it - 1))
+                {
+                    *(temp + 1) = *temp;
+                    --temp;
+                }
+                *(it) = v;
+                result = it;
+            }
+
+            //check if there is no space on the front, if so, construct new element at the end
+            else if(begin.get_block_address() == first_block && begin.get_block_index() == 0)
+            {
+                _a.construct(&*end, value_type());
+                ++end;
+                iterator temp = end - 2;
+
+                while(temp != (it - 1))
+                {
+                    *(temp + 1) = *temp;
+                    --temp;
+                }
+                *it = v;
+                result = it;
+
+            }
+            //check if there is no space on the back, if so, construct new element at the begin
+            else if(end.get_block_address() == last_block && end.get_block_index() == (block_size - 1))
+            {
+                --begin;
+                _a.construct(&*begin, value_type());
+                iterator temp = begin + 1;
+
+                while(temp != (it + 1))
+                {
+                    *(temp - 1) = *temp;
+                    ++temp;
+                }
+                *it = v;
+                result = it;
+            }
+            //else pick the shorter distance to shift
+            else if ((it - begin) <= (end - it))
+            {
+                --begin;
+                _a.construct(&*begin, value_type());
+                iterator temp = begin + 1;
+
+                while(temp != (it + 1))
+                {
+                    *(temp - 1) = *temp;
+                    ++temp;
+                }
+                *it = v;
+                result = it;
+            }
+            else
+            {
+                _a.construct(&*end, value_type());
+                ++end;
+                iterator temp = end - 2;
+
+                while(temp != (it - 1))
+                {
+                    *(temp + 1) = *temp;
+                    --temp;
+                }
+                *it = v;
+                result = it;
+            }
 
             assert(valid());
-            return iterator();}
+            return result;
+        }
 
         // ---
         // pop
@@ -1152,7 +1247,7 @@ class MyDeque {
         void push_back (const_reference v) 
         {
             //reallocate if not enough memory at the end
-            if((last_block - end.get_block_address) == 1 && end.get_block_index == 9)
+            if((last_block - end.get_block_address) == 1 && end.get_block_index == ()block_size - 1)
             {
                 resize(size + 1,v);
             }
@@ -1214,21 +1309,6 @@ class MyDeque {
                     --end;
                 }
             }
-            /*
-            //the capacity is still enough, destroy all elements and copy, but no reallocation is needed
-            else if(((last_block - first_block) * block_size) >= s)
-            {
-                int new_first_block_offset = ((((last_block - first_block) * block_size) - s) / 2);
-                new_begin = (first_block + new_first_block_offset, ((new_first_block_offset % block_size) == 0) ? 0 : (new_first_block_offset - 1));
-                //assign construct
-                int count = 0;
-                for(iterator current = new_begin; current >= begin && current < end; ++current)
-                {
-
-                }
-
-            }
-            */
             //reallocation is not enough capacity
             else
             {
