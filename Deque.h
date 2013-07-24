@@ -74,6 +74,7 @@ BI uninitialized_fill (A& a, BI b, BI e, const U& v) {
     return e;
 }
 
+
 // -------
 // MyDeque
 // -------
@@ -322,7 +323,7 @@ class MyDeque {
                     if(current_block_index-- == 0)
                     {
                         current_block_index = (block_size - 1);
-                        --*current_block;
+                        --current_block;
                     }
                     assert(valid());
                     return *this;
@@ -351,6 +352,7 @@ class MyDeque {
                  */
                 iterator& operator += (difference_type d) 
                 {
+                    
                     //wrap around blocks
                     current_block += d / block_size;
 
@@ -365,6 +367,7 @@ class MyDeque {
                     {
                         current_block_index += index_inc;
                     }
+                    
 
                     assert(valid());
                     return *this;
@@ -790,9 +793,26 @@ class MyDeque {
             begin_iterator = iterator(first_block + 2, 5);
             end_iterator = iterator(first_block + 2, 5);
 
-
-            assert(valid());
         }
+
+void printd()
+{
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "block difference: " << last_block - first_block << " iterator difference: " << std::distance(begin_iterator, end_iterator) << " size: " << size_num << std::endl;
+    std::cout << "number of block begin far from first_block: " << begin_iterator.get_block_address() - first_block << std::endl;
+    std::cout << "number of block filled with elements: " << end_iterator.get_block_address() -  begin_iterator.get_block_address() << std::endl;
+    std::cout << "number of empty blocks at the end: " << last_block - end_iterator.get_block_address() << std::endl;
+    std::cout << "begin index: " << begin_iterator.get_block_index() << "  end index: " << end_iterator.get_block_index() << std::endl;
+    std::for_each(begin_iterator, end_iterator, [](value_type elem)
+    {
+        std::cout << elem << ", ";
+    });
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+}
 
         /**
          * fill constructor that optionally takes in an allocator
@@ -860,7 +880,6 @@ class MyDeque {
             begin_iterator = iterator(first_block + (that.begin_iterator.get_block_address() - that.first_block), that.begin_iterator.get_block_index());
 
             end_iterator = uninitialized_copy(_a, that.begin_iterator, that.end_iterator, begin_iterator);
-
             assert(valid());
         }
 
@@ -1287,7 +1306,7 @@ class MyDeque {
          */
         void push_back (const_reference v) 
         {
-            std::cout << v << " get pushed" << std::endl;
+            //std::cout << v << " get pushed" << std::endl;
             //reallocate if not enough memory at the end
             if((last_block == end_iterator.get_block_address()) && end_iterator.get_block_index() == 0)
             {   
@@ -1299,6 +1318,7 @@ class MyDeque {
                 ++end_iterator;
                 ++size_num;
             }
+            
             assert(valid());}
 
         /**
@@ -1333,6 +1353,9 @@ class MyDeque {
             ++size_num;
             assert(valid());}
 
+
+
+
         // ------
         // resize
         // ------
@@ -1343,7 +1366,12 @@ class MyDeque {
          * change the 
          */
         void resize (size_type s, const_reference v = value_type()) 
-        {std::cout << "b" << std::endl;
+        {   
+
+            std::cout << "Before Resize  **************" << std::endl;
+
+            printd();
+
             //destroy elements at the end_iterator if s is less than the current size
             if(s <= size_num)
             {   
@@ -1357,8 +1385,8 @@ class MyDeque {
             }
             //reallocation is not enough capacity
             else
-            {   
-                size_num = s;
+            {
+
 
                 std::size_t block_num = (s / block_size + 1) * 2;
                 pointer* new_first_block = _a_outer.allocate(block_num);
@@ -1367,7 +1395,9 @@ class MyDeque {
                 begin_iterator.set_block_address(new_first_block + ((s / block_size + 1) / 2));
                 pointer* current =  new_first_block;
 
-                _a_outer.deallocate(first_block, last_block - first_block);
+                pointer* old_first_block = first_block;
+                pointer* old_last_block = last_block;
+
                 first_block = new_first_block;
                 last_block = new_first_block + block_num;
 
@@ -1393,21 +1423,26 @@ class MyDeque {
                     ++current;
                 }
                 
-                end_iterator = begin_iterator + s;
+                end_iterator = begin_iterator + size_num;
 
                 //append new elements
                 std::size_t count = s - size_num;
 
+
                 while(count-- != 0)
-                {
+                {   //std::cout << "constructing : " << v << std::endl;
                     _a.construct(&*end_iterator, v);
                     ++end_iterator;
                 }
-                std::cout << *begin_iterator << std::endl;
-                std::cout << &*begin_iterator << "   " << (&*end_iterator - &*begin_iterator) << "    " << &*end_iterator << std::endl;
-
+                size_num = s;
+                _a_outer.deallocate(old_first_block, old_last_block - old_first_block);
             }
-            assert(valid());std::cout << size_num << ",   " << (last_block - first_block) * block_size << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << "After Resize**************" << std::endl;
+            printd();
+            assert(valid());
         }
 
         // ----
