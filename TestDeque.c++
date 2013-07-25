@@ -83,10 +83,10 @@ class TypeTest : public testing::Test
                 random_packed.push_back(rand() % INT_MAX + 1);
             }
             
-            //this->random_loose.resize(50);
+            this->random_loose.resize(50);
             for(int i = 50; i != 0; --i)
             {
-                //random_loose[rand() % 49] = rand() % INT_MAX;
+                random_loose[rand() % 49] = rand() % INT_MAX;
             }
             
         }

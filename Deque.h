@@ -882,7 +882,7 @@ class MyDeque {
         MyDeque (const MyDeque& that) 
         {
             int block_num = that.last_block - that.first_block;
-            size_num = that.size_num;
+            size_num = that.size();
 
             //allocate memory
             first_block = _a_outer.allocate(block_num);
@@ -910,7 +910,7 @@ class MyDeque {
         {
             //destroy all elements
             destroy(_a, begin_iterator, end_iterator);
-            std::cout << "start delete" << std::endl;
+           // std::cout << "start delete" << std::endl;
 
             //deallocate inner arrays
             for(pointer* current = first_block; current != last_block; ++current)
