@@ -142,8 +142,10 @@ TYPED_TEST(TypeTest, TEST_SIZE_ONLY_CONSTRUCTOR_2)
     typename TestFixture::Container x(100);
     ASSERT_FALSE(x.empty());
     ASSERT_TRUE(x.size() == 100);
-    ASSERT_TRUE(equal(this->full_of_0.begin(), this->full_of_0.end(), x.begin()));
+    ASSERT_TRUE(equal(x.begin(), x.end(),this->full_of_0.begin()));
+    ASSERT_TRUE(equal(this->full_of_0.begin(),this->full_of_0.end(),x.begin()));
     ASSERT_TRUE(this->full_of_0 == x);
+    ASSERT_TRUE(x == this->full_of_0);
 }
 
 TYPED_TEST(TypeTest, TEST_FILL_CONSTRUCTOR_1) 

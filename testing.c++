@@ -11,12 +11,26 @@ using namespace std;
 
 int main()
 {	
-	MyDeque<int> x;
-	
-	for(int i = 0; i <100 ; ++i){
-		x.push_back(i);
-	}
+	MyDeque<int> x(10);
+
+	/*
+	MyDeque<int> y;
 
 	
-	cout << "end loop" << endl;
+	for(int i = 0; i < 10; ++i)
+	{
+		y.push_back(1);
+	}
+	
+	cout << "***********************************************" << endl;
+
+	for_each(y.begin(), y.end(), [](int elem)
+	{
+		cout << elem << " ";
+	});
+
+	cout << y.size()  << endl;
+	*/
+
+	cout << endl;
 }
