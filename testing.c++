@@ -12,9 +12,11 @@ using namespace std;
 int main()
 {	
 	MyDeque<int> x;
-	for(int i = 0; i < 1200; ++i)
-	{
+	
+	for(int i = 0; i <100 ; ++i){
 		x.push_back(i);
 	}
+
+	
 	cout << "end loop" << endl;
 }

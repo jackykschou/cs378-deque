@@ -762,7 +762,23 @@ class MyDeque {
             // -----
 
             bool valid () const 
-            {
+            {   
+
+                // pointer* temp_first = first_block;
+                // pointer* temp_last = last_block;
+
+                // std::cout << "Deque :" << std::endl;
+                // while(temp_first != temp_last)
+                // {
+                //     for (int i = 0 ; i < 10; i++){
+                //         std::cout << (*temp_first)[i] << " ";
+                        
+                //     }
+                //     std::cout << std::endl;
+                //     ++temp_first;
+                // }
+
+
                 return (begin_iterator.get_block_address() <= end_iterator.get_block_address()) && (size_num >= 0) && (first_block <= last_block);
             }
 
@@ -795,24 +811,24 @@ class MyDeque {
 
         }
 
-void printd()
-{
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << "block difference: " << last_block - first_block << " iterator difference: " << std::distance(begin_iterator, end_iterator) << " size: " << size_num << std::endl;
-    std::cout << "number of block begin far from first_block: " << begin_iterator.get_block_address() - first_block << std::endl;
-    std::cout << "number of block filled with elements: " << end_iterator.get_block_address() -  begin_iterator.get_block_address() << std::endl;
-    std::cout << "number of empty blocks at the end: " << last_block - end_iterator.get_block_address() << std::endl;
-    std::cout << "begin index: " << begin_iterator.get_block_index() << "  end index: " << end_iterator.get_block_index() << std::endl;
-    std::for_each(begin_iterator, end_iterator, [](value_type elem)
-    {
-        std::cout << elem << ", ";
-    });
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-}
+        void printd()
+        {
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << "block difference: " << last_block - first_block << " iterator difference: " << std::distance(begin_iterator, end_iterator) << " size: " << size_num << std::endl;
+            std::cout << "number of block begin far from first_block: " << begin_iterator.get_block_address() - first_block << std::endl;
+            std::cout << "number of block filled with elements: " << end_iterator.get_block_address() -  begin_iterator.get_block_address() << std::endl;
+            std::cout << "number of empty blocks at the end: " << last_block - end_iterator.get_block_address() << std::endl;
+            std::cout << "begin index: " << begin_iterator.get_block_index() << "  end index: " << end_iterator.get_block_index() << std::endl;
+            std::for_each(begin_iterator, end_iterator, [](value_type elem)
+            {
+                std::cout << elem << ", ";
+            });
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
+        }
 
         /**
          * fill constructor that optionally takes in an allocator
@@ -904,7 +920,7 @@ void printd()
             //dellocate outer arrays
             _a_outer.deallocate(first_block, last_block - first_block);
 
-            assert(valid());
+            //assert(valid());
         }
 
         // ----------
@@ -1368,9 +1384,9 @@ void printd()
         void resize (size_type s, const_reference v = value_type()) 
         {   
 
-            std::cout << "Before Resize  **************" << std::endl;
+            //std::cout << "Before Resize  **************" << std::endl;
 
-            printd();
+            //printd();
 
             //destroy elements at the end_iterator if s is less than the current size
             if(s <= size_num)
@@ -1392,8 +1408,39 @@ void printd()
                 pointer* new_first_block = _a_outer.allocate(block_num);
                 pointer* old_begin_block = begin_iterator.get_block_address();
                 pointer* old_end_block = end_iterator.get_block_address();
+
+
+
+
+
+                pointer* temp_first = first_block;
+                pointer* temp_last = last_block;
+                //deallocate the unused inner arrays
+                while(temp_first != begin_iterator.get_block_address())
+                {
+                 _a.deallocate(*temp_first, block_size);
+                 ++temp_first;
+                }
+                //deallocate the unsude inner arrays
+                while(end_iterator.get_block_address() != temp_last){
+                    --temp_last;
+                    _a.deallocate(*temp_last, block_size);
+                    
+                }
+
+
                 begin_iterator.set_block_address(new_first_block + ((s / block_size + 1) / 2));
                 pointer* current =  new_first_block;
+
+
+
+                //deallocate the unsude inner arrays
+                while(end_iterator.get_block_address() != temp_last){
+                    --temp_last;
+                    _a.deallocate(*temp_last, block_size);
+                    
+                }
+
 
                 pointer* old_first_block = first_block;
                 pointer* old_last_block = last_block;
@@ -1437,11 +1484,9 @@ void printd()
                 size_num = s;
                 _a_outer.deallocate(old_first_block, old_last_block - old_first_block);
             }
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << "After Resize**************" << std::endl;
-            printd();
+            
+            //std::cout << "After Resize**************" << std::endl;
+            //printd();
             assert(valid());
         }
 
@@ -1489,6 +1534,9 @@ void printd()
 
             assert(valid());}
         };
+
+
+
 
         template<typename T, typename A>
         typename std::size_t MyDeque<T, A>::block_size = 10;
