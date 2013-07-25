@@ -102,6 +102,12 @@ TYPED_TEST(TypeTest, TEST_DEFAULT_CONSTRUCTOR)
     ASSERT_TRUE(this->empty.size() == 0);
 }
 
+TYPED_TEST(TypeTest, TEST_CONSTRUCTOR_WITH_ALLOCATOR_1) 
+{
+    typename TestFixture::Container x(allocator<int>());
+}
+
+
 TYPED_TEST(TypeTest, TEST_COPY_CONSTRUCTOR_1) 
 {
     typename TestFixture::Container x(this->random_loose);
@@ -724,6 +730,21 @@ TYPED_TEST(TypeTest, TEST_PUSH_FRONT_1)
     ASSERT_TRUE(x[2] == 1);
 }
 
+TYPED_TEST(TypeTest, TEST_PUSH_FRONT_2) 
+{
+    typename TestFixture::Container x;
+    
+    for(int i = 0; i < 100; ++i)
+    {
+        x.push_front(0);
+    }
+
+    ASSERT_TRUE(x.size() == 100);
+    ASSERT_TRUE(x == this->full_of_0);
+    ASSERT_TRUE(equal(x.begin(), x.end(), this->full_of_0.begin()));
+
+}
+
 TYPED_TEST(TypeTest, TEST_POP_FRONT_1) 
 {
     typename TestFixture::Container x;
@@ -860,24 +881,77 @@ TYPED_TEST(TypeTest, TEST_RESIZE_3)
 }
 
 
-TYPED_TEST(TypeTest, TEST_clear_1) 
+TYPED_TEST(TypeTest, TEST_CLEAR_1) 
 {
     this->full_of_1.clear();
     ASSERT_TRUE(this->full_of_1.empty());
 }
 
-TYPED_TEST(TypeTest, TEST_clear_2) 
+TYPED_TEST(TypeTest, TEST_CLEAR_2) 
 {
     this->full_of_0.clear();
     ASSERT_TRUE(this->full_of_0.empty());
 }
 
 
-TYPED_TEST(TypeTest, TEST_clear_3) 
+TYPED_TEST(TypeTest, TEST_CLEAR_3) 
 {
     this->empty.push_back(100);
     this->empty.push_front(121);
     this->empty.clear();
     ASSERT_TRUE(this->empty.empty());
 }
+
+TYPED_TEST(TypeTest, TEST_ITERATOR_PLUS_EQUAL_1) 
+{
+    typename TestFixture::Container::iterator it(this->full_of_1.begin());
+    for(int i = 0; i < 100; ++i)
+    {
+        ++it;
+    }
+    ASSERT_TRUE(it == (this->full_of_1.begin() += 100));
+}
+
+TYPED_TEST(TypeTest, TEST_ITERATOR_PLUS_EQUAL_2) 
+{
+    typename TestFixture::Container::iterator it(this->full_of_1.begin());
+    for(int i = 0; i < 0; ++i)
+    {
+        ++it;
+    }
+    ASSERT_TRUE(it == (this->full_of_1.begin() += 0));
+}
+
+TYPED_TEST(TypeTest, TEST_ITERATOR_MINUS_EQUAL_1) 
+{
+    typename TestFixture::Container::iterator it(this->full_of_1.end());
+    for(int i = 0; i < 100; ++i)
+    {
+        --it;
+    }
+    ASSERT_TRUE(it == (this->full_of_1.end() -= 100));
+}
+
+TYPED_TEST(TypeTest, TEST_ITERATOR_MINUSS_EQUAL_2) 
+{
+    typename TestFixture::Container::iterator it(this->full_of_1.end());
+    for(int i = 0; i < 0; ++i)
+    {
+        --it;
+    }
+    ASSERT_TRUE(it == (this->full_of_1.end() -= 0));
+}
+
+TYPED_TEST(TypeTest, TEST_COMBO) 
+{
+    typename TestFixture::Container x;
+    for(int i = 0; i < 50; ++i)
+    {
+        x.push_back(1);
+        x.push_front(1);
+    }
+    ASSERT_TRUE(x.size() == 100);
+    ASSERT_TRUE(x == this->full_of_1);
+}
+
 

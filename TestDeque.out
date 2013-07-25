@@ -1,0 +1,199 @@
+Running main() from gtest_main.cc
+[==========] Running 95 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 95 tests from TypeTest/0, where TypeParam = MyDeque<int, std::allocator<int> >
+[ RUN      ] TypeTest/0.TEST_DEFAULT_CONSTRUCTOR
+[       OK ] TypeTest/0.TEST_DEFAULT_CONSTRUCTOR (34 ms)
+[ RUN      ] TypeTest/0.TEST_CONSTRUCTOR_WITH_ALLOCATOR_1
+[       OK ] TypeTest/0.TEST_CONSTRUCTOR_WITH_ALLOCATOR_1 (2 ms)
+[ RUN      ] TypeTest/0.TEST_COPY_CONSTRUCTOR_1
+[       OK ] TypeTest/0.TEST_COPY_CONSTRUCTOR_1 (16 ms)
+[ RUN      ] TypeTest/0.TEST_COPY_CONSTRUCTOR_2
+[       OK ] TypeTest/0.TEST_COPY_CONSTRUCTOR_2 (5 ms)
+[ RUN      ] TypeTest/0.TEST_COPY_EQUAL_ASSIGN_1
+[       OK ] TypeTest/0.TEST_COPY_EQUAL_ASSIGN_1 (5 ms)
+[ RUN      ] TypeTest/0.TEST_COPY_EQUAL_ASSIGN_2
+[       OK ] TypeTest/0.TEST_COPY_EQUAL_ASSIGN_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_SIZE_ONLY_CONSTRUCTOR_1
+[       OK ] TypeTest/0.TEST_SIZE_ONLY_CONSTRUCTOR_1 (5 ms)
+[ RUN      ] TypeTest/0.TEST_SIZE_ONLY_CONSTRUCTOR_2
+[       OK ] TypeTest/0.TEST_SIZE_ONLY_CONSTRUCTOR_2 (9 ms)
+[ RUN      ] TypeTest/0.TEST_FILL_CONSTRUCTOR_1
+[       OK ] TypeTest/0.TEST_FILL_CONSTRUCTOR_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_FILL_CONSTRUCTOR_2
+[       OK ] TypeTest/0.TEST_FILL_CONSTRUCTOR_2 (7 ms)
+[ RUN      ] TypeTest/0.TEST_FILL_CONSTRUCTOR_3
+[       OK ] TypeTest/0.TEST_FILL_CONSTRUCTOR_3 (6 ms)
+[ RUN      ] TypeTest/0.TEST_SIZE_1
+[       OK ] TypeTest/0.TEST_SIZE_1 (3 ms)
+[ RUN      ] TypeTest/0.TEST_SIZE_2
+[       OK ] TypeTest/0.TEST_SIZE_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_SIZE_3
+[       OK ] TypeTest/0.TEST_SIZE_3 (3 ms)
+[ RUN      ] TypeTest/0.TEST_EMPTY_1
+[       OK ] TypeTest/0.TEST_EMPTY_1 (3 ms)
+[ RUN      ] TypeTest/0.TEST_EMPTY_2
+[       OK ] TypeTest/0.TEST_EMPTY_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_EMPTY_3
+[       OK ] TypeTest/0.TEST_EMPTY_3 (3 ms)
+[ RUN      ] TypeTest/0.TEST_EQUALS_1
+[       OK ] TypeTest/0.TEST_EQUALS_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_EQUALS_2
+[       OK ] TypeTest/0.TEST_EQUALS_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_EQUALS_3
+[       OK ] TypeTest/0.TEST_EQUALS_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_NOT_EQUALS_1
+[       OK ] TypeTest/0.TEST_NOT_EQUALS_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_NOT_EQUALS_2
+[       OK ] TypeTest/0.TEST_NOT_EQUALS_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_NOT_EQUALS_3
+[       OK ] TypeTest/0.TEST_NOT_EQUALS_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_1
+[       OK ] TypeTest/0.TEST_LESS_THAN_1 (6 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_2
+[       OK ] TypeTest/0.TEST_LESS_THAN_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_3
+[       OK ] TypeTest/0.TEST_LESS_THAN_3 (5 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_4
+[       OK ] TypeTest/0.TEST_LESS_THAN_4 (6 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_5
+[       OK ] TypeTest/0.TEST_LESS_THAN_5 (6 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_1
+[       OK ] TypeTest/0.TEST_MORE_THAN_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_2
+[       OK ] TypeTest/0.TEST_MORE_THAN_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_3
+[       OK ] TypeTest/0.TEST_MORE_THAN_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_4
+[       OK ] TypeTest/0.TEST_MORE_THAN_4 (7 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_5
+[       OK ] TypeTest/0.TEST_MORE_THAN_5 (6 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_EQUAL_1
+[       OK ] TypeTest/0.TEST_LESS_THAN_EQUAL_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_EQUAL_2
+[       OK ] TypeTest/0.TEST_LESS_THAN_EQUAL_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_EQUAL_3
+[       OK ] TypeTest/0.TEST_LESS_THAN_EQUAL_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_EQUAL_4
+[       OK ] TypeTest/0.TEST_LESS_THAN_EQUAL_4 (6 ms)
+[ RUN      ] TypeTest/0.TEST_LESS_THAN_EQUAL_5
+[       OK ] TypeTest/0.TEST_LESS_THAN_EQUAL_5 (6 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_EQUAL_1
+[       OK ] TypeTest/0.TEST_MORE_THAN_EQUAL_1 (3 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_EQUAL_2
+[       OK ] TypeTest/0.TEST_MORE_THAN_EQUAL_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_EQUAL_3
+[       OK ] TypeTest/0.TEST_MORE_THAN_EQUAL_3 (3 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_EQUAL_4
+[       OK ] TypeTest/0.TEST_MORE_THAN_EQUAL_4 (6 ms)
+[ RUN      ] TypeTest/0.TEST_MORE_THAN_EQUAL_5
+[       OK ] TypeTest/0.TEST_MORE_THAN_EQUAL_5 (6 ms)
+[ RUN      ] TypeTest/0.TEST_INDEX_OP_1
+[       OK ] TypeTest/0.TEST_INDEX_OP_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_INDEX_OP_2
+[       OK ] TypeTest/0.TEST_INDEX_OP_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_INDEX_OP_3
+[       OK ] TypeTest/0.TEST_INDEX_OP_3 (3 ms)
+[ RUN      ] TypeTest/0.TEST_INDEX_OP_4
+[       OK ] TypeTest/0.TEST_INDEX_OP_4 (3 ms)
+[ RUN      ] TypeTest/0.TEST_AT_1
+[       OK ] TypeTest/0.TEST_AT_1 (5 ms)
+[ RUN      ] TypeTest/0.TEST_AT_2
+[       OK ] TypeTest/0.TEST_AT_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_AT_3
+[       OK ] TypeTest/0.TEST_AT_3 (3 ms)
+[ RUN      ] TypeTest/0.TEST_AT_4
+[       OK ] TypeTest/0.TEST_AT_4 (3 ms)
+[ RUN      ] TypeTest/0.TEST_AT_5
+[       OK ] TypeTest/0.TEST_AT_5 (38 ms)
+[ RUN      ] TypeTest/0.TEST_FRONT_1
+[       OK ] TypeTest/0.TEST_FRONT_1 (3 ms)
+[ RUN      ] TypeTest/0.TEST_FRONT_2
+[       OK ] TypeTest/0.TEST_FRONT_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_FRONT_3
+[       OK ] TypeTest/0.TEST_FRONT_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_BACK_1
+[       OK ] TypeTest/0.TEST_BACK_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_BACK_2
+[       OK ] TypeTest/0.TEST_BACK_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_BACK_3
+[       OK ] TypeTest/0.TEST_BACK_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_BEGIN_1
+[       OK ] TypeTest/0.TEST_BEGIN_1 (3 ms)
+[ RUN      ] TypeTest/0.TEST_BEGIN_2
+[       OK ] TypeTest/0.TEST_BEGIN_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_BEGIN_3
+[       OK ] TypeTest/0.TEST_BEGIN_3 (3 ms)
+[ RUN      ] TypeTest/0.TEST_END_1
+[       OK ] TypeTest/0.TEST_END_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_END_2
+[       OK ] TypeTest/0.TEST_END_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_END_3
+[       OK ] TypeTest/0.TEST_END_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_EQUAL_ASSIGN_1
+[       OK ] TypeTest/0.TEST_EQUAL_ASSIGN_1 (8 ms)
+[ RUN      ] TypeTest/0.TEST_EQUAL_ASSIGN_2
+[       OK ] TypeTest/0.TEST_EQUAL_ASSIGN_2 (6 ms)
+[ RUN      ] TypeTest/0.TEST_SWAP_1
+[       OK ] TypeTest/0.TEST_SWAP_1 (6 ms)
+[ RUN      ] TypeTest/0.TEST_SWAP_2
+[       OK ] TypeTest/0.TEST_SWAP_2 (6 ms)
+[ RUN      ] TypeTest/0.TEST_SWAP_3
+[       OK ] TypeTest/0.TEST_SWAP_3 (10 ms)
+[ RUN      ] TypeTest/0.TEST_PUSH_BACK_1
+[       OK ] TypeTest/0.TEST_PUSH_BACK_1 (9 ms)
+[ RUN      ] TypeTest/0.TEST_POP_BACK_1
+[       OK ] TypeTest/0.TEST_POP_BACK_1 (8 ms)
+[ RUN      ] TypeTest/0.TEST_POP_BACK_2
+[       OK ] TypeTest/0.TEST_POP_BACK_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_POP_BACK_3
+[       OK ] TypeTest/0.TEST_POP_BACK_3 (3 ms)
+[ RUN      ] TypeTest/0.TEST_PUSH_FRONT_1
+[       OK ] TypeTest/0.TEST_PUSH_FRONT_1 (10 ms)
+[ RUN      ] TypeTest/0.TEST_PUSH_FRONT_2
+[       OK ] TypeTest/0.TEST_PUSH_FRONT_2 (8 ms)
+[ RUN      ] TypeTest/0.TEST_POP_FRONT_1
+[       OK ] TypeTest/0.TEST_POP_FRONT_1 (8 ms)
+[ RUN      ] TypeTest/0.TEST_POP_FRONT_2
+[       OK ] TypeTest/0.TEST_POP_FRONT_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_POP_FRONT_3
+[       OK ] TypeTest/0.TEST_POP_FRONT_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_INSERT_1
+[       OK ] TypeTest/0.TEST_INSERT_1 (24 ms)
+[ RUN      ] TypeTest/0.TEST_INSERT_2
+[       OK ] TypeTest/0.TEST_INSERT_2 (17 ms)
+[ RUN      ] TypeTest/0.TEST_INSERT_3
+[       OK ] TypeTest/0.TEST_INSERT_3 (9 ms)
+[ RUN      ] TypeTest/0.TEST_ERASE_1
+[       OK ] TypeTest/0.TEST_ERASE_1 (9 ms)
+[ RUN      ] TypeTest/0.TEST_ERASE_2
+[       OK ] TypeTest/0.TEST_ERASE_2 (7 ms)
+[ RUN      ] TypeTest/0.TEST_ERASE_3
+[       OK ] TypeTest/0.TEST_ERASE_3 (9 ms)
+[ RUN      ] TypeTest/0.TEST_RESIZE_1
+[       OK ] TypeTest/0.TEST_RESIZE_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_RESIZE_2
+[       OK ] TypeTest/0.TEST_RESIZE_2 (5 ms)
+[ RUN      ] TypeTest/0.TEST_RESIZE_3
+[       OK ] TypeTest/0.TEST_RESIZE_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_CLEAR_1
+[       OK ] TypeTest/0.TEST_CLEAR_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_CLEAR_2
+[       OK ] TypeTest/0.TEST_CLEAR_2 (3 ms)
+[ RUN      ] TypeTest/0.TEST_CLEAR_3
+[       OK ] TypeTest/0.TEST_CLEAR_3 (4 ms)
+[ RUN      ] TypeTest/0.TEST_ITERATOR_PLUS_EQUAL_1
+[       OK ] TypeTest/0.TEST_ITERATOR_PLUS_EQUAL_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_ITERATOR_PLUS_EQUAL_2
+[       OK ] TypeTest/0.TEST_ITERATOR_PLUS_EQUAL_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_ITERATOR_MINUS_EQUAL_1
+[       OK ] TypeTest/0.TEST_ITERATOR_MINUS_EQUAL_1 (4 ms)
+[ RUN      ] TypeTest/0.TEST_ITERATOR_MINUSS_EQUAL_2
+[       OK ] TypeTest/0.TEST_ITERATOR_MINUSS_EQUAL_2 (4 ms)
+[ RUN      ] TypeTest/0.TEST_COMBO
+[       OK ] TypeTest/0.TEST_COMBO (5 ms)
+[----------] 95 tests from TypeTest/0 (586 ms total)
+
+[----------] Global test environment tear-down
+[==========] 95 tests from 1 test case ran. (610 ms total)
+[  PASSED  ] 95 tests.

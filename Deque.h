@@ -160,7 +160,7 @@ class MyDeque {
                  */
                 friend bool operator == (const iterator& lhs, const iterator& rhs) 
                 {
-                    return (lhs.current_block_index == rhs.current_block_index) && (*(lhs.current_block) == *(rhs.current_block));
+                    return (lhs.current_block_index == rhs.current_block_index) && (lhs.current_block == rhs.current_block);
                 }
 
                 /**
@@ -478,7 +478,7 @@ class MyDeque {
                 friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) 
                 {
 
-                    return (lhs.current_block_index == rhs.current_block_index) && (*lhs.current_block == *rhs.current_block);
+                    return (lhs.current_block_index == rhs.current_block_index) && (lhs.current_block == rhs.current_block);
 
 
                 }
@@ -762,43 +762,8 @@ class MyDeque {
             // valid
             // -----
 
-            void print_whole_d()
-            {
-
-                pointer* temp_first = first_block;
-                 pointer* temp_last = last_block;
-
-                 std::cout << "Deque :" << std::endl;
-                 while(temp_first != temp_last)
-                 {
-                     for (std::size_t i = 0 ; i < block_size; i++){
-                         std::cout << (*temp_first)[i] << " ";
-                        
-                     }
-                     std::cout << std::endl;
-                     ++temp_first;
-                 }
-
-            }
-
             bool valid () const 
             {   
-                /*
-                 pointer* temp_first = first_block;
-                 pointer* temp_last = last_block;
-
-                 std::cout << "Deque :" << std::endl;
-                 while(temp_first != temp_last)
-                 {
-                     for (std::size_t i = 0 ; i < block_size; i++){
-                         std::cout << (*temp_first)[i] << " ";
-                        
-                     }
-                     std::cout << std::endl;
-                     ++temp_first;
-                 }
-                 */
-
 
                 return (begin_iterator.get_block_address() <= end_iterator.get_block_address()) && (size_num >= 0) && (first_block <= last_block);
             }
@@ -832,25 +797,6 @@ class MyDeque {
 
         }
 
-        void printd()
-        {
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << "block difference: " << last_block - first_block << " iterator difference: " << std::distance(begin_iterator, end_iterator) << " size: " << size_num << std::endl;
-            std::cout << "number of block begin far from first_block: " << begin_iterator.get_block_address() - first_block << std::endl;
-            std::cout << "number of block filled with elements: " << end_iterator.get_block_address() -  begin_iterator.get_block_address() + 1 << std::endl;
-            std::cout << "number of empty blocks at the end: " << last_block - end_iterator.get_block_address() << std::endl;
-            std::cout << "begin index: " << begin_iterator.get_block_index() << "  end index: " << end_iterator.get_block_index() << std::endl;
-            std::for_each(begin_iterator, end_iterator, [](value_type elem)
-            {
-                std::cout << elem << ", ";
-            });
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << std::endl;
-        }
-
         /**
          * fill constructor that optionally takes in an allocator
          * @param s the number of elements
@@ -875,6 +821,7 @@ class MyDeque {
             begin_iterator = iterator(first_block + block_num / 2, 5);
             end_iterator = iterator(first_block + block_num / 2, 5);
 
+            //middle load to contruct the elements
             for(std::size_t i = 0; i < s / 2; ++i)
             {   
 
@@ -926,7 +873,6 @@ class MyDeque {
          */
         ~MyDeque () 
         {
-            std::cout << "yo" << std::endl;
             //destroy all elements
             destroy(_a, begin_iterator, end_iterator);
 
@@ -993,15 +939,16 @@ class MyDeque {
             }
             else //reallocation is needed
             {
-
-                //destroy old elements and deallocate both inner the outer arrays
+                //destroy all elements
                 destroy(_a, begin_iterator, end_iterator);
-                for(pointer* current = first_block; first_block != last_block; ++current)
+
+                //deallocate inner arrays
+                for(pointer* current = first_block; current != last_block; ++current)
                 {
                     _a.deallocate(*current, block_size);
                 }
+                //dellocate outer arrays
                 _a_outer.deallocate(first_block, last_block - first_block);
-
 
                 int block_num = that.last_block - that.first_block;
                 size_num = that.size();
@@ -1018,27 +965,6 @@ class MyDeque {
                 begin_iterator = iterator(first_block + (that.begin_iterator.get_block_address() - that.first_block), that.begin_iterator.get_block_index());
 
                 end_iterator = uninitialized_copy(_a, that.begin_iterator, that.end_iterator, begin_iterator);
-
-                /*
-                std::cout << "here" << std::endl;
-
-                //allocate outer array
-                pointer* new_first_block = _a_outer.allocate(block_num);
-                pointer* current = new_first_block;
-
-                //allocate inner arrays
-                for (std::size_t i = 0; i < block_size; ++i, ++current)
-                {
-                    *current = _a.allocate(block_size);
-                }
-
-                begin_iterator = iterator(new_first_block + ((that.size_num / block_size + 1) / 2), that.begin_iterator.get_block_index());
-
-                end_iterator = uninitialized_copy(_a, that.begin_iterator, that.end_iterator, begin_iterator);
-
-                first_block = new_first_block;
-                last_block = new_first_block + block_num;
-                */
 
             }
 
@@ -1187,14 +1113,14 @@ class MyDeque {
         {
             iterator result = it + 1;
             //check if it is closer to the begin_iterator or closer to the end_iterator (and shift elements to the shorter side)
-            if(distance(it, begin_iterator) <= distance(end_iterator, it))
-            {
+            if(distance(begin_iterator, it) <= distance(it, end_iterator))
+            {   
                 while(it != begin_iterator)
                 {
                     *it = *(it - 1);
                     --it;
                 }
-                _a.destroy(&*it);
+                _a.destroy(&*begin_iterator);
                 ++begin_iterator;
             }
             else
@@ -1204,9 +1130,9 @@ class MyDeque {
                     *it = *(it + 1);
                     ++it;
                 }
-                _a.destroy(&*it);
-                --end_iterator;
+                _a.destroy(&*(--end_iterator));
             }
+            --size_num;
 
             assert(valid());
             return result;
@@ -1243,14 +1169,14 @@ class MyDeque {
          */
         iterator insert (iterator it, const_reference v) 
         {
-
-            iterator result;
-            //if the dequeu is already full, reisze it
-            if((size_num + 1) > ((last_block - first_block) * block_size))
+            //if the end of the deque is fulled, reisze it
+            if(end_iterator.get_block_address() == last_block && end_iterator.get_block_index() == 0)
             {
-                std::size_t it_offset = std::distance(it, begin_iterator);  //keep track of the insertion position
+                std::size_t it_offset = std::distance(begin_iterator, it);  //keep track of the insertion position
                 resize(size_num + 1);
+
                 it = begin_iterator + it_offset;
+
                 iterator temp = end_iterator - 2;
 
                 while(temp != (it - 1))
@@ -1259,59 +1185,13 @@ class MyDeque {
                     --temp;
                 }
                 *(it) = v;
-                result = it;
-            }
-
-            //check if there is no space on the front, if so, construct new element at the end
-            else if(begin_iterator.get_block_address() == first_block && begin_iterator.get_block_index() == 0)
-            {
-                _a.construct(&*end_iterator, value_type());
-                ++end_iterator;
-                iterator temp = end_iterator - 2;
-
-                while(temp != (it - 1))
-                {
-                    *(temp + 1) = *temp;
-                    --temp;
-                }
-                *it = v;
-                result = it;
-
-            }
-            //check if there is no space on the back, if so, construct new element at the begin
-            else if(end_iterator.get_block_address() == last_block && end_iterator.get_block_index() == (block_size - 1))
-            {
-                --begin_iterator;
-                _a.construct(&*begin_iterator, value_type());
-                iterator temp = begin_iterator + 1;
-
-                while(temp != (it + 1))
-                {
-                    *(temp - 1) = *temp;
-                    ++temp;
-                }
-                *it = v;
-                result = it;
-            }
-            //else pick the shorter distance to shift
-            else if (std::distance(it, begin_iterator) <= std::distance(end_iterator, it))
-            {
-                --begin_iterator;
-                _a.construct(&*begin_iterator, value_type());
-                iterator temp = begin_iterator + 1;
-
-                while(temp != (it + 1))
-                {
-                    *(temp - 1) = *temp;
-                    ++temp;
-                }
-                *it = v;
-                result = it;
             }
             else
             {
+                ++size_num;
                 _a.construct(&*end_iterator, value_type());
                 ++end_iterator;
+
                 iterator temp = end_iterator - 2;
 
                 while(temp != (it - 1))
@@ -1319,12 +1199,11 @@ class MyDeque {
                     *(temp + 1) = *temp;
                     --temp;
                 }
-                *it = v;
-                result = it;
+                *(it) = v;
             }
 
             assert(valid());
-            return result;
+            return it;
         }
 
         // ---
@@ -1361,7 +1240,6 @@ class MyDeque {
          */
         void push_back (const_reference v) 
         {
-            //std::cout << v << " get pushed" << std::endl;
             //reallocate if not enough memory at the end
             if((last_block == end_iterator.get_block_address()) && end_iterator.get_block_index() == 0)
             {   
@@ -1385,20 +1263,10 @@ class MyDeque {
             //reallocate if not enough memory at the front
             if((begin_iterator.get_block_address() - first_block) == 0 && begin_iterator.get_block_index() == 0)
             {
-                std::size_t block_num = ((size_num + 1) / block_size + 1) * 2;
-                pointer* new_first_block = _a_outer.allocate(block_num);
-                begin_iterator.set_block_address(new_first_block + (((size_num + 1) / block_size + 1) / 2) );
-
-                pointer* current = new_first_block + (((size_num + 1) / block_size + 1) / 2);
-                pointer* old_begin_block = begin_iterator.get_block_address();
-                pointer* old_end_block = end_iterator.get_block_address();
-                for(; old_begin_block != old_end_block; ++current, ++old_begin_block)
-                {
-                    *current = *old_begin_block; 
-                }
-                end_iterator = begin_iterator + (size_num + 1);
-
-                _a.construct(&*(--begin_iterator), v);
+                //if there is only one block so far, when we expand the number of blocks, the 
+                resize(size_num + 1); //memory reallocation
+                pop_back(); //get rid of the new element the resize appaend
+                _a.construct(&*(--begin_iterator), v); //get new element in the front
 
             }
             else
@@ -1423,8 +1291,6 @@ class MyDeque {
         void resize (size_type s, const_reference v = value_type()) 
         {   
 
-            //std::cout << "Before Resize  **************" << std::endl;
-
             //destroy elements at the end_iterator if s is less than the current size
             if(s <= size_num)
             {   
@@ -1439,38 +1305,48 @@ class MyDeque {
             //reallocation is not enough capacity
             else
             {
-
-
                 std::size_t block_num = (s / block_size + 1) * 2;
                 pointer* new_first_block = _a_outer.allocate(block_num);
+
                 pointer* old_begin_block = begin_iterator.get_block_address();
                 pointer* old_end_block = end_iterator.get_block_address();
-
-
-
-
+                std::size_t blocks_filled = old_end_block - old_begin_block;
+                if(end_iterator.get_block_index() != 0)
+                {
+                    ++blocks_filled;
+                }
 
                 pointer* temp_first = first_block;
                 pointer* temp_last = last_block;
-                //deallocate the unused inner arrays
+
+                //deallocate the unused inner arrays at the begin
                 while(temp_first != begin_iterator.get_block_address())
                 {
                  _a.deallocate(*temp_first, block_size);
                  ++temp_first;
                 }
-                //deallocate the unsude inner arrays
-                while(end_iterator.get_block_address() != temp_last){
-                    --temp_last;
-                    _a.deallocate(*temp_last, block_size);
-                    
+
+                //deallocate the unused inner arrays at the end
+                if(end_iterator.get_block_index() != 0)
+                {
+                    while(end_iterator.get_block_address() != --temp_last)
+                    {
+                        _a.deallocate(*temp_last, block_size);
+                    }
+                }
+                else
+                {
+                    while(end_iterator.get_block_address() != temp_last)
+                    {
+                        --temp_last;
+                        _a.deallocate(*temp_last, block_size);
+                    }
                 }
 
-
                 begin_iterator.set_block_address(new_first_block + ((s / block_size + 1) / 2));
+                end_iterator = begin_iterator + size_num;
+
                 pointer* current =  new_first_block;
-
-
-
                 pointer* old_first_block = first_block;
                 pointer* old_last_block = last_block;
 
@@ -1485,7 +1361,7 @@ class MyDeque {
                 }
 
                 //copy old inner array
-                while(old_begin_block != old_end_block)
+                while(blocks_filled-- != 0)
                 {   
                     *current = *old_begin_block; 
                     ++current;
@@ -1499,8 +1375,6 @@ class MyDeque {
                     ++current;
                 }
                 
-                end_iterator = begin_iterator + size_num;
-
                 //append new elements
                 std::size_t count = s - size_num;
 
